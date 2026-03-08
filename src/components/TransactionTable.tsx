@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 
 interface TransactionTableProps {
   transactions: Transaction[];
+  onDownload?: () => void;
 }
 
-export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => {
+export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions, onDownload }) => {
   const downloadCSV = () => {
     const headers = ['Date', 'Description', 'Amount', 'Category', 'Notes'];
     const rows = transactions.map(t => [
@@ -31,6 +32,8 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    if (onDownload) onDownload();
   };
 
   if (transactions.length === 0) return null;

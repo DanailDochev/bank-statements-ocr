@@ -3,6 +3,7 @@ import { FileUploader } from './components/FileUploader';
 import { TransactionTable } from './components/TransactionTable';
 import { SummaryDashboard } from './components/SummaryDashboard';
 import { CategoryChart } from './components/CategoryChart';
+import { FinancialTip, FINANCIAL_TIPS } from './components/FinancialTip';
 import { Transaction, extractTransactions } from './services/geminiService';
 import { Wallet, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,11 +13,18 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState<{ total: number; completed: number; pending: number; currentFile?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentTip, setCurrentTip] = useState<string | null>(null);
+
+  const getRandomTip = () => {
+    const randomIndex = Math.floor(Math.random() * FINANCIAL_TIPS.length);
+    setCurrentTip(FINANCIAL_TIPS[randomIndex]);
+  };
 
   const handleFilesSelect = async (files: File[]) => {
     setIsProcessing(true);
     setError(null);
     setTransactions([]);
+    setCurrentTip(null);
     setProgress({ total: files.length, completed: 0, pending: files.length });
 
     const allTransactions: Transaction[] = [];
@@ -45,6 +53,7 @@ export default function App() {
       }
 
       setTransactions(allTransactions);
+      getRandomTip(); // Show a tip after successful processing
     } catch (err: any) {
       console.error(err);
       setError(err.message || "An unexpected error occurred during extraction.");
@@ -110,6 +119,9 @@ export default function App() {
             error={error}
           />
 
+          {/* Financial Tip Section */}
+          <FinancialTip tip={currentTip} onRefresh={getRandomTip} />
+
           {/* Results Summary Dashboard */}
           <SummaryDashboard transactions={transactions} />
 
@@ -119,7 +131,10 @@ export default function App() {
           </div>
 
           {/* Results Table */}
-          <TransactionTable transactions={transactions} />
+          <TransactionTable 
+            transactions={transactions} 
+            onDownload={getRandomTip}
+          />
 
           {/* Features Grid (Only show when no results) */}
           {transactions.length === 0 && !isProcessing && (
