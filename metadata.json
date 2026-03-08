@@ -1,0 +1,5 @@
+{
+  "name": "StatementLens OCR",
+  "description": "Extract structured transaction data from bank statements (PDF/Images) using Gemini AI.",
+  "requestFramePermissions": []
+}
